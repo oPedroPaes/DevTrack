@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: devtrack
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devtrack
+    username: postgres
+    password: 678348912
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      "[hibernate.format_sql]": true
+
+jwt:
+  secret: minha_chave_super_secreta_com_mais_de_32_caracteres_123456
+  expiration: 86400000
