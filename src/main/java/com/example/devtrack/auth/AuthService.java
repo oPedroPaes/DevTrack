@@ -21,7 +21,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public void register(RegisterRequest request) {
-        
+
         if (repository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -30,7 +30,7 @@ public class AuthService {
         user.setName(request.name());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole("ROLE_USER");
+        user.setRole(User.UserRole.ROLE_USER);
 
         repository.save(user);
     }

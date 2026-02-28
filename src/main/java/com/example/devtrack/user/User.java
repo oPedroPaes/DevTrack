@@ -22,5 +22,11 @@ public class User {
 
     private String password;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public enum UserRole {
+        ROLE_USER,
+        ROLE_ADMIN
+    }
 }
