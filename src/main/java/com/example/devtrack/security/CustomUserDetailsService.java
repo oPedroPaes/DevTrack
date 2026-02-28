@@ -1,5 +1,6 @@
 package com.example.devtrack.security;
 
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
+    public @NonNull UserDetails loadUserByUsername(@NonNull String email) {
         User user = repository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
