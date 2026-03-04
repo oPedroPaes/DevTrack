@@ -1,5 +1,6 @@
 package com.example.devtrack.auth;
 
+import com.example.devtrack.exception.EmailAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,7 @@ public class AuthService {
     public void register(RegisterRequest request) {
 
         if (repository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistsException();
         }
 
         User user = new User();

@@ -38,9 +38,8 @@ public class StudySessionController {
             @PathVariable UUID id,
             @AuthenticationPrincipal UserDetails principal
             ) {
-        return ResponseEntity.ok(
-                studySessionService.finish(id, principal.getUsername())
-        );
+        StudySessionResponse response = studySessionService.finish(id, principal.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping

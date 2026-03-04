@@ -1,6 +1,10 @@
 package com.example.devtrack.studysession;
 
 
+import com.example.devtrack.exception.GoalNotFoundException;
+import com.example.devtrack.exception.SessionAlreadyFinishedException;
+import com.example.devtrack.exception.SessionNotFoundException;
+import com.example.devtrack.exception.UserNotFoundException;
 import com.example.devtrack.goal.Goal;
 import com.example.devtrack.goal.GoalRepository;
 import com.example.devtrack.studysession.dto.CreateStudySessionRequest;
@@ -28,7 +32,7 @@ public class StudySessionService {
     public StudySessionResponse create(CreateStudySessionRequest request, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         StudySession session = new StudySession();
         session.setDate(LocalDate.now());
@@ -41,7 +45,7 @@ public class StudySessionService {
         if (request.goalId() != null) {
             Goal goal = goalRepository
                     .findByIdAndUser(request.goalId(),user)
-                    .orElseThrow(() -> new RuntimeException("Goal not found"));
+                    .orElseThrow(() -> new GoalNotFoundException("Goal not found"));
             session.setGoal(goal);
         }
 
@@ -59,7 +63,7 @@ public class StudySessionService {
     public List<StudySessionResponse> listMySessions(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return studySessionRepository.findByUser(user)
                 .stream()
@@ -76,14 +80,14 @@ public class StudySessionService {
     public StudySessionResponse finish(UUID sessionId, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         StudySession session = studySessionRepository
                 .findByIdAndUser(sessionId, user)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
+                .orElseThrow(() -> new SessionNotFoundException("Session not found"));
 
         if (session.getEndTime() != null) {
-            throw new RuntimeException("Session already finished");
+            throw new SessionAlreadyFinishedException();
         }
 
         LocalDateTime endTime = LocalDateTime.now();

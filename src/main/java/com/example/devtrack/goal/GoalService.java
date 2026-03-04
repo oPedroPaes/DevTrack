@@ -1,5 +1,6 @@
 package com.example.devtrack.goal;
 
+import com.example.devtrack.exception.UserNotFoundException;
 import com.example.devtrack.goal.dto.CreateGoalRequest;
 import com.example.devtrack.goal.dto.GoalResponse;
 import com.example.devtrack.user.User;
@@ -20,7 +21,7 @@ public class GoalService {
     public GoalResponse createGoal(CreateGoalRequest request, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Goal goal = new Goal();
         goal.setTitle(request.title());
@@ -43,7 +44,7 @@ public class GoalService {
     public List<GoalResponse> listMyGoals(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return goalRepository.findByUser(user)
                 .stream()

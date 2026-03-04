@@ -1,5 +1,8 @@
-package com.example.devtrack.exception;
+package com.example.devtrack.exception.handler;
 
+import com.example.devtrack.exception.ApiError;
+import com.example.devtrack.exception.base.BusinessException;
+import com.example.devtrack.exception.base.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -45,16 +48,7 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, "Validation error", message, request);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(
-            ResourceNotFoundException ex,
-            HttpServletRequest request
-    ) {
-
-        return buildError(HttpStatus.NOT_FOUND, "Resource not found", ex.getMessage(), request);
-    }
-
-    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> handleBadCredentials(
             BadCredentialsException ex,
             HttpServletRequest request
@@ -62,6 +56,25 @@ public class GlobalExceptionHandler {
 
         return buildError(HttpStatus.UNAUTHORIZED, "Authentication failed", "Invalid email or password", request);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(
+            NotFoundException ex,
+            HttpServletRequest request
+    ) {
+
+        return buildError(HttpStatus.NOT_FOUND, "Resource not found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiError> handleConflict(
+            BusinessException ex,
+            HttpServletRequest request
+    ) {
+
+        return buildError(ex.getStatus(),ex.getError(), ex.getMessage(), request);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(
