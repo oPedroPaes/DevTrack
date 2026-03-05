@@ -10,10 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +64,7 @@ public class StudySessionServiceTest {
 
     @Test
     void shouldFinishSessionSuccessfully() {
+
         UUID sessionId = UUID.randomUUID();
         String email = "test@email.com";
 
@@ -70,6 +73,7 @@ public class StudySessionServiceTest {
 
         StudySession session = new StudySession();
         session.setUser(user);
+        session.setStartTime(LocalDateTime.now().minusHours(1));
 
         when(userRepository.findByEmail(email))
                 .thenReturn(Optional.of(user));
@@ -77,10 +81,12 @@ public class StudySessionServiceTest {
         when(studySessionRepository.findByIdAndUser(sessionId, user))
                 .thenReturn(Optional.of(session));
 
+        when(studySessionRepository.save(any()))
+                .thenReturn(session);
+
         studySessionService.finish(sessionId, email);
 
         verify(studySessionRepository).save(session);
     }
-
 
 }
