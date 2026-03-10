@@ -9,6 +9,7 @@ import com.example.devtrack.goal.Goal;
 import com.example.devtrack.goal.GoalRepository;
 import com.example.devtrack.studysession.dto.CreateStudySessionRequest;
 import com.example.devtrack.studysession.dto.StudySessionResponse;
+import com.example.devtrack.studysession.dto.UpdateSessionRequest;
 import com.example.devtrack.user.User;
 import com.example.devtrack.user.UserRepository;
 
@@ -60,6 +61,14 @@ public class StudySessionService {
         );
     }
 
+    public StudySessionResponse getSession(UUID id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        StudySession session = studySessionRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new SessionNotFoundException("Session not found"));
+        return mapToResponse(session);
+    }
+
     public List<StudySessionResponse> listMySessions(String email) {
 
         User user = userRepository.findByEmail(email)
@@ -75,6 +84,18 @@ public class StudySessionService {
                         session.getGoal() != null ? session.getGoal().getId() : null
                 ))
                 .toList();
+    }
+
+    public StudySessionResponse updateSession(UpdateSessionRequest request, String email, UUID id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        StudySession session = studySessionRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new SessionNotFoundException("Session not found"));
+
+        session.setSubject(request.subject());
+
+        StudySession saved = studySessionRepository.save(session);
+        return mapToResponse(saved);
     }
 
     public StudySessionResponse finish(UUID sessionId, String email) {
@@ -103,6 +124,14 @@ public class StudySessionService {
         StudySession saved = studySessionRepository.save(session);
 
         return mapToResponse(saved);
+    }
+
+    public void deleteSession(UUID id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        StudySession session = studySessionRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new SessionNotFoundException("Session not found"));
+        studySessionRepository.delete(session);
     }
 
     private StudySessionResponse mapToResponse(StudySession session) {

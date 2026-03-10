@@ -4,6 +4,8 @@ package com.example.devtrack.studysession;
 import com.example.devtrack.studysession.dto.CreateStudySessionRequest;
 import com.example.devtrack.studysession.dto.StudySessionResponse;
 
+import com.example.devtrack.studysession.dto.UpdateSessionRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,8 +24,8 @@ public class StudySessionController {
 
     @PostMapping
     public ResponseEntity<StudySessionResponse> create(
-            @RequestBody CreateStudySessionRequest request,
-            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal
+            @Valid @RequestBody CreateStudySessionRequest request,
+            @AuthenticationPrincipal UserDetails principal
             ) {
 
         StudySessionResponse response = studySessionService.create(
@@ -31,6 +33,37 @@ public class StudySessionController {
         );
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StudySessionResponse>> list(
+            @AuthenticationPrincipal UserDetails principal
+    ) {
+
+        return ResponseEntity.ok(
+                studySessionService.listMySessions(principal.getUsername())
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StudySessionResponse> getSession(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal
+            ) {
+        return ResponseEntity.ok(
+                studySessionService.getSession(id, principal.getUsername())
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StudySessionResponse> updateSession(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal,
+            @Valid @RequestBody UpdateSessionRequest request
+            ) {
+        return ResponseEntity.ok(
+                studySessionService.updateSession(request, principal.getUsername(), id)
+        );
     }
 
     @PatchMapping("/{id}/finish")
@@ -42,13 +75,12 @@ public class StudySessionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping
-    public ResponseEntity<List<StudySessionResponse>> list(
-            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSession(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal
     ) {
-
-        return ResponseEntity.ok(
-                studySessionService.listMySessions(principal.getUsername())
-        );
+        studySessionService.deleteSession(id, principal.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }
