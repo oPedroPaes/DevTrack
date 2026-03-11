@@ -28,9 +28,14 @@ public class StudySession {
 
     private LocalDateTime endTime;
 
+    @Column(nullable = false)
     private Integer durationInMinutes;
 
+    @Column(length = 100)
     private String subject;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id",
@@ -41,8 +46,12 @@ public class StudySession {
 
     @ManyToOne
     @JoinColumn(name = "goal_id",
-            foreignKey = @ForeignKey(name = " FK_SESSION_GOAL", value = ConstraintMode.CONSTRAINT)
+            foreignKey = @ForeignKey(name = "FK_SESSION_GOAL", value = ConstraintMode.CONSTRAINT)
                 )
                 private Goal goal;
 
+    @PrePersist
+    protected void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 }
