@@ -22,7 +22,10 @@ public class DashboardService {
         Integer week = sessionRepository.getWeekStudyTime(userId,  sevenDaysAgo);
         Integer month = sessionRepository.getMonthStudyTime(userId);
 
-        return new DashboardResponse(today, week, month);
+        Integer weeklyAverage = sessionRepository.getWeeklyAverage(userId, sevenDaysAgo);
+        Integer montlyAverage = sessionRepository.getMonthlyAverage(userId);
+
+        return new DashboardResponse(today, week, month, weeklyAverage, montlyAverage);
     }
 
 }

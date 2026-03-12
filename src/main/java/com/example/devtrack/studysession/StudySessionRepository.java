@@ -40,4 +40,21 @@ public interface StudySessionRepository extends JpaRepository<StudySession, UUID
         AND EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM CURRENT_DATE )
 """)
     Integer getMonthStudyTime(UUID userId);
+
+    @Query("""
+        SELECT COALESCE(SUM(s.durationInMinutes), 0) / 7
+        FROM StudySession s
+        WHERE s.user.id = :userId
+        AND s.date >= :startDate
+""")
+    Integer getWeeklyAverage(UUID userId, LocalDate startDate);
+
+    @Query("""
+        SELECT COALESCE(SUM(s.durationInMinutes), 0) / EXTRACT(DAY FROM CURRENT_DATE)
+        FROM StudySession s
+        WHERE s.user.id = :userId
+        AND EXTRACT(MONTH FROM s.date) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+""")
+    Integer getMonthlyAverage(UUID userId);
 }
