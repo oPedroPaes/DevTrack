@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import {login, saveToken} from "../services/auth";
 
+import Navbar from "../components/Navbar";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,6 +21,7 @@ function Login() {
 
     return (
         <div>
+            <Navbar />
             <h1>Login</h1>
 
             <form onSubmit={handleLogin}>
