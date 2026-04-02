@@ -42,7 +42,6 @@ public class Goal {
 
     public enum GoalStatus {
         ATIVO,
-        COMPLETO,
-        CANCELADO
+        COMPLETO
     }
 }

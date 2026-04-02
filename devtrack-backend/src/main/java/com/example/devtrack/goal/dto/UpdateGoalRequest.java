@@ -7,6 +7,5 @@ public record UpdateGoalRequest(
         @NotBlank
         String title,
 
-        @NotBlank
         String description
 ) {}
