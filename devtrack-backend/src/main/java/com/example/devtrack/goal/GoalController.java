@@ -4,6 +4,7 @@ import com.example.devtrack.goal.dto.CreateGoalRequest;
 
 import com.example.devtrack.goal.dto.GoalResponse;
 import com.example.devtrack.goal.dto.UpdateGoalRequest;
+import com.example.devtrack.goal.dto.UpdateGoalStatusRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -59,6 +60,17 @@ public class GoalController {
             ) {
         return ResponseEntity.ok(
                 goalService.updateGoal(request, principal.getUsername(), id)
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<GoalResponse> updateGoalStatus(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails principal,
+            @Valid @RequestBody UpdateGoalStatusRequest request
+            ) {
+        return ResponseEntity.ok(
+                goalService.updateGoalStatus(request, principal.getUsername(), id)
         );
     }
 

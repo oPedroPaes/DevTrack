@@ -5,6 +5,7 @@ import com.example.devtrack.exception.UserNotFoundException;
 import com.example.devtrack.goal.dto.CreateGoalRequest;
 import com.example.devtrack.goal.dto.GoalResponse;
 import com.example.devtrack.goal.dto.UpdateGoalRequest;
+import com.example.devtrack.goal.dto.UpdateGoalStatusRequest;
 import com.example.devtrack.user.User;
 import com.example.devtrack.user.UserRepository;
 
@@ -77,6 +78,18 @@ public class GoalService {
 
         goal.setTitle(request.title());
         goal.setDescription(request.description());
+
+        Goal saved = goalRepository.save(goal);
+        return mapToResponse(saved);
+    }
+
+    public GoalResponse updateGoalStatus(UpdateGoalStatusRequest request, String email, UUID id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Goal goal = goalRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new GoalNotFoundException("Goal not found"));
+
+        goal.setStatus(request.status());
 
         Goal saved = goalRepository.save(goal);
         return mapToResponse(saved);
