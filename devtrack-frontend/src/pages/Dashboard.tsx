@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { getUserData, type User } from "../services/user";
 import { getDashboard, type DashboardData } from "../services/dashboard";
+import Card from "../components/Card";
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -57,27 +58,11 @@ function Dashboard() {
   );
 }
 
-function Card({ title, value }: { title: string; value: string }) {
-  return (
-    <div style={cardStyle}>
-      <h3>{title}</h3>
-      <p>{value}</p>
-    </div>
-  );
-}
-
 const gridStyle: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
   gap: "20px",
   marginTop: "20px",
-};
-
-const cardStyle: React.CSSProperties = {
-  padding: "20px",
-  border: "1px solid #ccc",
-  borderRadius: "10px",
-  textAlign: "center",
 };
 
 export default Dashboard;
