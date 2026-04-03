@@ -24,6 +24,35 @@ export default function GoalCard({
     goal.description || "",
   );
 
+  const startEditing = () => {
+    setEditTitle(goal.title);
+    setEditDescription(goal.description || "");
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    //TODO: handle error antes de fechar edit mode pra evitar falso sucesso.
+    await onUpdate(goal.id, {
+      title: editTitle,
+      description: editDescription,
+    });
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditTitle(goal.title);
+    setEditDescription(goal.description || "");
+    setEditing(false);
+  };
+
+  const handleDelete = () => {
+    if (confirm("Tem certeza que deseja deletar esta meta?")) onDelete(goal.id);
+  };
+
+  const handleComplete = () => {
+    onComplete(goal.id);
+  };
+
   return (
     <Card>
       {editing ? (
@@ -31,48 +60,34 @@ export default function GoalCard({
           <input
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
+            placeholder="Título"
           />
           <textarea
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
+            placeholder="Descrição"
           />
-          <button
-            onClick={() => {
-              onUpdate(goal.id, {
-                title: editTitle,
-                description: editDescription,
-              });
-              setEditing(false);
-            }}
-          >
-            Salvar
-          </button>
-          <button onClick={() => setEditing(false)}>Cancelar</button>
+          <button onClick={handleSave}>Salvar</button>
+          <button onClick={handleCancel}>Cancelar</button>
         </>
       ) : (
         <>
           <h3>{goal.title}</h3>
-          <p>{goal.description}</p>
+          <p>{goal.description || "Sem descrição"}</p>
           <p>
             Data alvo: {new Date(goal.targetDate).toLocaleDateString("pt-BR")}
           </p>
           <p>Status: {goal.status}</p>
-          <button onClick={() => setEditing(true)}>Editar</button>
+          <button onClick={startEditing}>Editar</button>
           {goal.status === "ATIVO" && (
             <button
               disabled={loadingGoalId === goal.id}
-              onClick={() => onComplete(goal.id)}
+              onClick={handleComplete}
             >
               Concluir
             </button>
           )}
-          <button
-            style={{ color: "red" }}
-            onClick={() => {
-              if (confirm("Tem certeza que deseja deletar esta meta?"))
-                onDelete(goal.id);
-            }}
-          >
+          <button style={{ color: "red" }} onClick={handleDelete}>
             Deletar
           </button>
         </>
