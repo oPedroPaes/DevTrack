@@ -27,7 +27,7 @@ export default function GoalForm({ onCreate }: Props) {
         required
       />
       <textarea
-        placeholder="descrição"
+        placeholder="Descrição"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
