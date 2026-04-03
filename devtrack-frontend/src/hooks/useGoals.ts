@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import {
   getGoals,
   createGoal,
-  updateGoal,
+  updateGoal as updateGoalService,
   deleteGoal,
-  completeGoal,
+  completeGoal as completeGoalService,
 } from "../services/goal";
 import type { Goal } from "../services/goal";
 
@@ -26,7 +26,7 @@ export const useGoals = () => {
   const [loadingGoalId, setLoadingGoalId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchGoals() {
       try {
         const data = await getGoals();
         setGoals(data);
@@ -37,7 +37,7 @@ export const useGoals = () => {
         setLoading(false);
       }
     }
-    fetch();
+    fetchGoals();
   }, []);
 
   const addGoal = async (goal: CreateGoalData) => {
@@ -52,6 +52,7 @@ export const useGoals = () => {
   };
 
   const removeGoal = async (id: string) => {
+    setError("");
     try {
       await deleteGoal(id);
       setGoals((prev) => prev.filter((g) => g.id !== id));
@@ -61,10 +62,10 @@ export const useGoals = () => {
     }
   };
 
-  const updateExistingGoal = async (id: string, data: UpdateGoalData) => {
+  const updateGoal = async (id: string, data: UpdateGoalData) => {
     setError("");
     try {
-      const updated = await updateGoal(id, data);
+      const updated = await updateGoalService(id, data);
       setGoals((prev) =>
         prev.map((g) => (g.id === id ? { ...g, ...updated } : g)),
       );
@@ -74,13 +75,14 @@ export const useGoals = () => {
     }
   };
 
-  const completeExistingGoal = async (id: string) => {
-    if (loadingGoalId === id) return;
+  const completeGoal = async (id: string) => {
+    setError("");
+    if (loadingGoalId === id) return; // Previne requests duplicadas
     setLoadingGoalId(id);
     try {
-      const updated = await completeGoal(id);
+      const updated = await completeGoalService(id);
       setGoals((prev) =>
-        prev.map((g) => (g.id === id ? { ...g, status: updated.status } : g)),
+        prev.map((g) => (g.id === id ? { ...g, ...updated } : g)),
       );
     } catch (err) {
       console.error(err);
@@ -95,9 +97,10 @@ export const useGoals = () => {
     loading,
     error,
     loadingGoalId,
+
     addGoal,
     removeGoal,
-    updateExistingGoal,
-    completeExistingGoal,
+    updateGoal,
+    completeGoal,
   };
 };
